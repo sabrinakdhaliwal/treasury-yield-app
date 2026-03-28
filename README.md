@@ -38,8 +38,8 @@ A full-stack bank liquidity management tool that plots the U.S. Treasury yield c
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/<your-username>/treasury-yield-app.git
-cd treasury-yield-app
+git clone https://github.com/sabrinakdhaliwal/modernfi.git
+cd modernfi
 ```
 
 ---
@@ -98,7 +98,7 @@ The app will open at `http://localhost:3000`.
 ## Project Structure
 
 ```
-treasury-yield-app/
+modernfi/
 ├── backend/
 │   ├── main.py          # FastAPI app — yields, orders, SQLite
 │   ├── requirements.txt
