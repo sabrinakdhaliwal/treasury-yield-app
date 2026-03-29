@@ -1,5 +1,5 @@
 {
-  "name": "treasury-yield-app",
+  "name": "treasury-yield-desk",
   "version": "1.0.0",
   "private": true,
   "proxy": "http://localhost:8000",
