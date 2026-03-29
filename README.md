@@ -2,7 +2,7 @@
 
 A full-stack bank liquidity management tool that plots the U.S. Treasury yield curve and lets users submit and track Treasury orders.
 
-![App Screenshot](./treasure-liquidity-app.png)
+![App Screenshot](./treasury-app.png)
 
 ---
 
@@ -140,6 +140,7 @@ The UI always shows which source is active.
 - Orders are stored in `backend/orders.db` (SQLite). Delete this file to reset history.
 - No authentication is included — this is a prototype/take-home scope.
 - For production you'd want auth, rate limiting, Postgres, and a caching layer for yield data.
+> **Tip:** Run both servers in split terminals for a smoother dev experience.
 
 ---
 
