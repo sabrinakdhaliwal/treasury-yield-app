@@ -8,8 +8,8 @@ A full-stack bank liquidity management tool that plots the U.S. Treasury yield c
 
 ## Features
 
-- **Live Yield Curve** — fetches data from the U.S. Treasury XML feed, falls back to FRED (St. Louis Fed) if unavailable, then to representative static data as a final fallback. Source is labeled in the UI (LIVE / FRED / STATIC).
-- **Interactive Chart** — area chart of the full yield curve with hover tooltips; flags inverted curve conditions.
+- **Live Yield Curve** — fetches data from the U.S. Treasury XML feed, falls back to FRED (St. Louis Fed) if unavailable, then to representative static data as a final fallback. Source is labeled in the UI (live / fred / static).
+- **Interactive Chart** — line chart of the full yield curve with hover tooltips; flags inverted curve conditions.
 - **Order Submission** — pick a term, enter an amount; the app previews current yield and estimated annual income before you submit.
 - **Order History** — all submitted orders persisted in SQLite, shown in a table with term, amount, locked-in yield, timestamp, and notes.
 - **Delete Orders** — remove any order from history.
@@ -18,10 +18,10 @@ A full-stack bank liquidity management tool that plots the U.S. Treasury yield c
 
 ## Tech Stack
 
-| Layer    | Technology                    |
-|----------|-------------------------------|
+| Layer    | Technology                        |
+|----------|-----------------------------------|
 | Backend  | Python · FastAPI · SQLite · httpx |
-| Frontend | React · Recharts              |
+| Frontend | React · Recharts                  |
 | Data     | US Treasury XML API → FRED CSV → static fallback |
 
 ---
@@ -42,8 +42,6 @@ git clone https://github.com/sabrinakdhaliwal/treasury-yield-app.git
 cd treasury-yield-app
 ```
 
----
-
 ### 2. Start the Backend
 
 ```bash
@@ -54,8 +52,6 @@ uvicorn main:app --reload --port 8000
 
 The API will be live at `http://localhost:8000`.  
 Interactive docs: `http://localhost:8000/docs`
-
----
 
 ### 3. Start the Frontend
 
@@ -75,13 +71,13 @@ The app will open at `http://localhost:3000`.
 
 ## API Reference
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/yields` | Latest yield curve + valid terms |
-| `GET` | `/api/orders` | All historical orders (newest first) |
-| `POST` | `/api/orders` | Submit a new order |
-| `DELETE` | `/api/orders/:id` | Delete an order |
-| `GET` | `/health` | Health check |
+| Method   | Endpoint            | Description                        |
+|----------|---------------------|------------------------------------|
+| `GET`    | `/api/yields`       | Latest yield curve + valid terms   |
+| `GET`    | `/api/orders`       | All historical orders (newest first) |
+| `POST`   | `/api/orders`       | Submit a new order                 |
+| `DELETE` | `/api/orders/:id`   | Delete an order                    |
+| `GET`    | `/health`           | Health check                       |
 
 ### POST `/api/orders` body
 
@@ -100,15 +96,29 @@ The app will open at `http://localhost:3000`.
 ```
 treasury-yield-app/
 ├── backend/
-│   ├── main.py          # FastAPI app — yields, orders, SQLite
-│   ├── requirements.txt
-│   └── orders.db        # Created automatically on first run
+│   ├── main.py          # App entry point — wires middleware and routes
+│   ├── routes.py        # API endpoint handlers
+│   ├── models.py        # Pydantic request/response models
+│   ├── db.py            # Database connection and setup
+│   ├── yields.py        # Yield data fetching (Treasury → FRED → static)
+│   ├── requirements.txt # Pinned dependencies
+│   └── .env.example     # Environment variable reference
 ├── frontend/
 │   ├── public/
 │   │   └── index.html
 │   ├── src/
-│   │   ├── App.js       # Main dashboard component
+│   │   ├── App.js       # Root component — state and layout
+│   │   ├── api.js       # All backend API calls
+│   │   ├── utils.js     # Shared formatting helpers
+│   │   ├── components/
+│   │   │   ├── Header.js
+│   │   │   ├── YieldChart.js
+│   │   │   ├── KeyRates.js
+│   │   │   ├── OrderForm.js
+│   │   │   ├── OrderTable.js
+│   │   │   └── StatCards.js
 │   │   └── index.js
+│   ├── .env.example
 │   └── package.json
 └── README.md
 ```
@@ -129,7 +139,7 @@ The UI always shows which source is active.
 
 - Orders are stored in `backend/orders.db` (SQLite). Delete this file to reset history.
 - No authentication is included — this is a prototype/take-home scope.
-- For a production deployment you'd want to add auth, rate limiting, a proper database, and a caching layer for yield data.
+- For production you'd want auth, rate limiting, Postgres, and a caching layer for yield data.
 
 ---
 
@@ -167,11 +177,9 @@ React-native and composable. The honest tradeoff is I'd look at D3 for
 anything more custom, since Recharts abstracts away control that you
 eventually want back.
 
-The bigger thing I'd change with more time is componentization. Right now
-App.js is doing too much — the chart, the order form, and the history table
-are all in one file. I'd pull those into separate components, add prop types
-or TypeScript, and write at least basic unit tests for the order submission
-flow.
+I also went back and componentized the frontend after the initial build —
+splitting App.js into separate components for the chart, form, order table,
+header, and stats. Same principle as the backend refactor: each file has one job.
 
 ### What I'd Add With More Time
 
